@@ -54,7 +54,7 @@ final class Preferences: ObservableObject {
             K.isPaused: false,
             K.skipConcealed: true,
             K.ignoredApps: PasteboardTypes.defaultIgnoredApps,
-            K.popupPosition: PopupPosition.cursor.rawValue,
+            K.popupPosition: PopupPosition.center.rawValue,
             K.menuRecentCount: 10,
             K.onboardingDone: false,
         ])
@@ -68,7 +68,7 @@ final class Preferences: ObservableObject {
         isPaused = d.bool(forKey: K.isPaused)
         skipConcealed = d.bool(forKey: K.skipConcealed)
         ignoredApps = d.stringArray(forKey: K.ignoredApps) ?? PasteboardTypes.defaultIgnoredApps
-        popupPosition = PopupPosition(rawValue: d.string(forKey: K.popupPosition) ?? "") ?? .cursor
+        popupPosition = PopupPosition(rawValue: d.string(forKey: K.popupPosition) ?? "") ?? .center
         menuRecentCount = d.integer(forKey: K.menuRecentCount)
         onboardingDone = d.bool(forKey: K.onboardingDone)
     }
