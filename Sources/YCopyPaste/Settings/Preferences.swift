@@ -2,9 +2,15 @@ import Foundation
 import Combine
 
 enum PopupPosition: String, CaseIterable, Identifiable {
-    case cursor, center
+    case saved, center, cursor
     var id: String { rawValue }
-    var title: String { self == .cursor ? "У курсора мыши" : "По центру экрана" }
+    var title: String {
+        switch self {
+        case .saved: return "Там, куда перетащили"
+        case .center: return "По центру экрана"
+        case .cursor: return "У курсора мыши"
+        }
+    }
 }
 
 /// Настройки приложения (UserDefaults).
@@ -26,6 +32,7 @@ final class Preferences: ObservableObject {
         static let popupPosition = "popupPosition"
         static let menuRecentCount = "menuRecentCount"
         static let onboardingDone = "onboardingDone"
+        static let popupOrigin = "popupOrigin"
     }
 
     @Published var popupHotKey: KeyCombo { didSet { saveCombo(popupHotKey, K.popupHotKey) } }
@@ -54,7 +61,7 @@ final class Preferences: ObservableObject {
             K.isPaused: false,
             K.skipConcealed: true,
             K.ignoredApps: PasteboardTypes.defaultIgnoredApps,
-            K.popupPosition: PopupPosition.center.rawValue,
+            K.popupPosition: PopupPosition.saved.rawValue,
             K.menuRecentCount: 10,
             K.onboardingDone: false,
         ])
@@ -68,9 +75,21 @@ final class Preferences: ObservableObject {
         isPaused = d.bool(forKey: K.isPaused)
         skipConcealed = d.bool(forKey: K.skipConcealed)
         ignoredApps = d.stringArray(forKey: K.ignoredApps) ?? PasteboardTypes.defaultIgnoredApps
-        popupPosition = PopupPosition(rawValue: d.string(forKey: K.popupPosition) ?? "") ?? .center
+        popupPosition = PopupPosition(rawValue: d.string(forKey: K.popupPosition) ?? "") ?? .saved
         menuRecentCount = d.integer(forKey: K.menuRecentCount)
         onboardingDone = d.bool(forKey: K.onboardingDone)
+    }
+
+    /// Последнее положение окна истории (левый нижний угол), если его перетаскивали.
+    var popupOrigin: CGPoint? {
+        get {
+            guard let arr = d.array(forKey: K.popupOrigin) as? [Double], arr.count == 2 else { return nil }
+            return CGPoint(x: arr[0], y: arr[1])
+        }
+        set {
+            if let p = newValue { d.set([Double(p.x), Double(p.y)], forKey: K.popupOrigin) }
+            else { d.removeObject(forKey: K.popupOrigin) }
+        }
     }
 
     private func saveCombo(_ combo: KeyCombo, _ key: String) {

@@ -53,6 +53,8 @@ struct PopupView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 11)
+        .background(WindowDragArea())
+        .help("Окно можно перетащить за эту панель")
     }
 
     private var list: some View {

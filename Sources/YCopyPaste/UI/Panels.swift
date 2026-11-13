@@ -32,6 +32,17 @@ final class KeyablePanel: NSPanel {
         let size = frame.size
         var origin: NSPoint
         switch mode {
+        case .saved:
+            if let saved = Preferences.shared.popupOrigin,
+               let target = NSScreen.screens.first(where: { $0.visibleFrame.intersects(NSRect(origin: saved, size: size)) }) {
+                // Не даём окну уехать за край экрана (например, после отключения монитора).
+                let v = target.visibleFrame
+                let x = min(max(saved.x, v.minX), v.maxX - size.width)
+                let y = min(max(saved.y, v.minY), v.maxY - size.height)
+                setFrameOrigin(NSPoint(x: x, y: y))
+                return
+            }
+            origin = NSPoint(x: visible.midX - size.width / 2, y: visible.midY - size.height / 2 + visible.height * 0.1)
         case .cursor:
             origin = NSPoint(x: mouse.x + 8, y: mouse.y - size.height - 8)
         case .center:
@@ -41,6 +52,19 @@ final class KeyablePanel: NSPanel {
         origin.y = min(max(origin.y, visible.minY + 8), visible.maxY - size.height - 8)
         setFrameOrigin(origin)
     }
+}
+
+/// Область, за которую можно перетаскивать окно без рамки.
+struct WindowDragArea: NSViewRepresentable {
+    final class DragView: NSView {
+        override var mouseDownCanMoveWindow: Bool { true }
+        override func mouseDown(with event: NSEvent) {
+            window?.performDrag(with: event)
+        }
+    }
+
+    func makeNSView(context: Context) -> NSView { DragView() }
+    func updateNSView(_ nsView: NSView, context: Context) {}
 }
 
 /// Полупрозрачный фон как у системных меню.

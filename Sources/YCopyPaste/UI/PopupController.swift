@@ -7,6 +7,7 @@ final class PopupController: NSObject, NSWindowDelegate {
     let vm: PopupViewModel
     private let panel: KeyablePanel
     private var keyMonitor: Any?
+    private var isPositioning = false
     private let onPick: (ClipItem, PasteMode) -> Void
     private let onOpenSettings: () -> Void
 
@@ -31,7 +32,9 @@ final class PopupController: NSObject, NSWindowDelegate {
 
     func show() {
         vm.prepareForShow()
+        isPositioning = true
         panel.position(Preferences.shared.popupPosition)
+        isPositioning = false
         panel.makeKeyAndOrderFront(nil)
         installKeyMonitor()
     }
@@ -39,6 +42,15 @@ final class PopupController: NSObject, NSWindowDelegate {
     func hide() {
         removeKeyMonitor()
         panel.orderOut(nil)
+    }
+
+    /// Пользователь перетащил окно — запоминаем место.
+    func windowDidMove(_ notification: Notification) {
+        guard !isPositioning, panel.isVisible else { return }
+        Preferences.shared.popupOrigin = panel.frame.origin
+        if Preferences.shared.popupPosition != .saved {
+            Preferences.shared.popupPosition = .saved
+        }
     }
 
     func windowDidResignKey(_ notification: Notification) {
