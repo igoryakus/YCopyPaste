@@ -8,14 +8,14 @@ final class AppController {
     let store: HistoryStore
     private(set) var monitor: ClipboardMonitor!
     private(set) var popup: PopupController!
-    private(set) var flycut: FlycutController!
+    private(set) var cycle: CycleController!
     private var statusBar: StatusBarController!
     private var settingsWindow: NSWindow?
     private var bag = Set<AnyCancellable>()
     /// Последнее активное приложение, кроме нашего — туда и вставляем.
     private var lastExternalApp: NSRunningApplication?
 
-    private enum HotKeyID: UInt32 { case popup = 1, flycut = 2 }
+    private enum HotKeyID: UInt32 { case popup = 1, cycle = 2 }
 
     init(store: HistoryStore) {
         self.store = store
@@ -23,7 +23,7 @@ final class AppController {
         popup = PopupController(store: store,
                                 onPick: { [weak self] item, mode in self?.paste(item, mode: mode) },
                                 onOpenSettings: { [weak self] in self?.openSettings() })
-        flycut = FlycutController(store: store) { [weak self] item in self?.paste(item, mode: .normal) }
+        cycle = CycleController(store: store) { [weak self] item in self?.paste(item, mode: .normal) }
         statusBar = StatusBarController(app: self)
     }
 
@@ -32,9 +32,9 @@ final class AppController {
         trackFrontmostApp()
 
         let prefs = Preferences.shared
-        prefs.$popupHotKey.combineLatest(prefs.$flycutHotKey)
-            .sink { [weak self] popupCombo, flycutCombo in
-                self?.registerHotKeys(popup: popupCombo, flycut: flycutCombo)
+        prefs.$popupHotKey.combineLatest(prefs.$cycleHotKey)
+            .sink { [weak self] popupCombo, cycleCombo in
+                self?.registerHotKeys(popup: popupCombo, cycle: cycleCombo)
             }
             .store(in: &bag)
 
@@ -51,13 +51,13 @@ final class AppController {
         }
     }
 
-    private func registerHotKeys(popup popupCombo: KeyCombo, flycut flycutCombo: KeyCombo) {
+    private func registerHotKeys(popup popupCombo: KeyCombo, cycle cycleCombo: KeyCombo) {
         let hk = HotKeyManager.shared
         hk.register(id: HotKeyID.popup.rawValue, combo: popupCombo) { [weak self] in
             self?.popup.toggle()
         }
-        hk.register(id: HotKeyID.flycut.rawValue, combo: flycutCombo) { [weak self] in
-            self?.flycut.hotKeyPressed(flycutCombo)
+        hk.register(id: HotKeyID.cycle.rawValue, combo: cycleCombo) { [weak self] in
+            self?.cycle.hotKeyPressed(cycleCombo)
         }
     }
 
@@ -144,7 +144,7 @@ final class AppController {
         Иконка приложения — в строке меню вверху экрана.
 
         • \(Preferences.shared.popupHotKey.displayString) — открыть историю буфера
-        • \(Preferences.shared.flycutHotKey.displayString) — режим Flycut: держите модификаторы и жмите клавишу ещё раз, чтобы листать
+        • \(Preferences.shared.cycleHotKey.displayString) — листать историю: держите ⌃⌘ и нажимайте V, отпустите клавиши, и элемент вставится
 
         Чтобы выбранный элемент вставлялся сам, разрешите YCopyPaste «Универсальный доступ» \
         (Системные настройки → Конфиденциальность и безопасность → Универсальный доступ).

@@ -95,10 +95,10 @@ private struct HotKeySettings: View {
         Form {
             Section {
                 LabeledContent("Открыть историю") { KeyRecorder(combo: $prefs.popupHotKey) }
-                LabeledContent("Режим Flycut") { KeyRecorder(combo: $prefs.flycutHotKey) }
+                LabeledContent("Режим листания") { KeyRecorder(combo: $prefs.cycleHotKey) }
                 Button("Вернуть по умолчанию") {
                     prefs.popupHotKey = .defaultPopup
-                    prefs.flycutHotKey = .defaultFlycut
+                    prefs.cycleHotKey = .defaultCycle
                 }
             } footer: {
                 Text("Нажмите на сочетание и введите новое. Нужен хотя бы один из ⌘ ⌃ ⌥. Esc — отмена.")
@@ -115,7 +115,7 @@ private struct HotKeySettings: View {
                 shortcut("⇥", "переключить «Все / Закреплённые»")
                 shortcut("⎋", "очистить поиск / закрыть")
             }
-            Section("Режим Flycut") {
+            Section("Режим листания") {
                 Text("Держите модификаторы (по умолчанию ⌃⌘) и нажимайте V: каждое нажатие — элемент постарше. Отпустите клавиши, и выбранный элемент вставится. ↑↓ листают, ⎋ отменяет.")
                     .font(.callout)
             }
@@ -204,7 +204,7 @@ private struct AboutView: View {
             Text("YCopyPaste").font(.title.bold())
             Text("Версия \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "dev")")
                 .foregroundStyle(.secondary)
-            Text("Менеджер буфера обмена для macOS.\nИстория, поиск, закрепление, режим Flycut.")
+            Text("Менеджер буфера обмена для macOS.\nИстория, поиск, закрепление, режим листания.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
         }

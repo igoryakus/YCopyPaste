@@ -14,7 +14,7 @@ final class Preferences: ObservableObject {
 
     private enum K {
         static let popupHotKey = "popupHotKey"
-        static let flycutHotKey = "flycutHotKey"
+        static let cycleHotKey = "cycleHotKey"
         static let autoPaste = "autoPaste"
         static let plainByDefault = "plainByDefault"
         static let moveToTop = "moveToTopOnPaste"
@@ -29,7 +29,7 @@ final class Preferences: ObservableObject {
     }
 
     @Published var popupHotKey: KeyCombo { didSet { saveCombo(popupHotKey, K.popupHotKey) } }
-    @Published var flycutHotKey: KeyCombo { didSet { saveCombo(flycutHotKey, K.flycutHotKey) } }
+    @Published var cycleHotKey: KeyCombo { didSet { saveCombo(cycleHotKey, K.cycleHotKey) } }
     @Published var autoPaste: Bool { didSet { d.set(autoPaste, forKey: K.autoPaste) } }
     @Published var plainByDefault: Bool { didSet { d.set(plainByDefault, forKey: K.plainByDefault) } }
     @Published var moveToTopOnPaste: Bool { didSet { d.set(moveToTopOnPaste, forKey: K.moveToTop) } }
@@ -59,7 +59,7 @@ final class Preferences: ObservableObject {
             K.onboardingDone: false,
         ])
         popupHotKey = Self.loadCombo(d, K.popupHotKey) ?? .defaultPopup
-        flycutHotKey = Self.loadCombo(d, K.flycutHotKey) ?? .defaultFlycut
+        cycleHotKey = Self.loadCombo(d, K.cycleHotKey) ?? .defaultCycle
         autoPaste = d.bool(forKey: K.autoPaste)
         plainByDefault = d.bool(forKey: K.plainByDefault)
         moveToTopOnPaste = d.bool(forKey: K.moveToTop)

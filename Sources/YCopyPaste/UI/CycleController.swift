@@ -1,19 +1,19 @@
 import AppKit
 import SwiftUI
 
-/// Режим Flycut: держите модификаторы и нажимайте клавишу, чтобы листать историю.
+/// Режим листания: держите модификаторы и нажимайте клавишу, чтобы листать историю.
 /// Отпустите модификаторы — выбранный элемент вставится.
 @MainActor
-final class FlycutModel: ObservableObject {
+final class CycleModel: ObservableObject {
     @Published var item: ClipItem?
     @Published var index = 0
     @Published var total = 0
 }
 
 @MainActor
-final class FlycutController: NSObject {
+final class CycleController: NSObject {
     private let store: HistoryStore
-    private let model: FlycutModel
+    private let model: CycleModel
     private let panel: KeyablePanel
     private var timer: Timer?
     private var keyMonitor: Any?
@@ -24,10 +24,10 @@ final class FlycutController: NSObject {
     init(store: HistoryStore, onCommit: @escaping (ClipItem) -> Void) {
         self.store = store
         self.onCommit = onCommit
-        model = FlycutModel()
+        model = CycleModel()
         panel = KeyablePanel(size: NSSize(width: 440, height: 280))
         super.init()
-        let hosting = NSHostingView(rootView: FlycutBezelView(model: model, store: store))
+        let hosting = NSHostingView(rootView: CycleBezelView(model: model, store: store))
         hosting.frame = NSRect(x: 0, y: 0, width: 440, height: 280)
         panel.contentView = hosting
     }
@@ -108,8 +108,8 @@ final class FlycutController: NSObject {
 }
 
 @MainActor
-struct FlycutBezelView: View {
-    @ObservedObject var model: FlycutModel
+struct CycleBezelView: View {
+    @ObservedObject var model: CycleModel
     let store: HistoryStore
 
     var body: some View {

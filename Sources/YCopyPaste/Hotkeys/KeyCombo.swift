@@ -7,7 +7,7 @@ struct KeyCombo: Codable, Equatable {
     var modifiers: UInt32
 
     static let defaultPopup = KeyCombo(keyCode: UInt32(kVK_ANSI_V), modifiers: UInt32(cmdKey | shiftKey))
-    static let defaultFlycut = KeyCombo(keyCode: UInt32(kVK_ANSI_V), modifiers: UInt32(cmdKey | controlKey))
+    static let defaultCycle = KeyCombo(keyCode: UInt32(kVK_ANSI_V), modifiers: UInt32(cmdKey | controlKey))
 
     init(keyCode: UInt32, modifiers: UInt32) {
         self.keyCode = keyCode
