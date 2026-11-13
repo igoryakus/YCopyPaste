@@ -48,7 +48,13 @@ final class Preferences: ObservableObject {
     @Published var skipConcealed: Bool { didSet { d.set(skipConcealed, forKey: K.skipConcealed) } }
     @Published var ignoredApps: [String] { didSet { d.set(ignoredApps, forKey: K.ignoredApps) } }
     @Published var popupPosition: PopupPosition { didSet { d.set(popupPosition.rawValue, forKey: K.popupPosition) } }
-    @Published var menuRecentCount: Int { didSet { d.set(menuRecentCount, forKey: K.menuRecentCount) } }
+    @Published var menuRecentCount: Int {
+        didSet {
+            let clamped = min(max(menuRecentCount, 0), 1000)
+            if clamped != menuRecentCount { menuRecentCount = clamped }
+            d.set(clamped, forKey: K.menuRecentCount)
+        }
+    }
     @Published var onboardingDone: Bool { didSet { d.set(onboardingDone, forKey: K.onboardingDone) } }
 
     private init() {
@@ -62,7 +68,7 @@ final class Preferences: ObservableObject {
             K.skipConcealed: true,
             K.ignoredApps: PasteboardTypes.defaultIgnoredApps,
             K.popupPosition: PopupPosition.saved.rawValue,
-            K.menuRecentCount: 10,
+            K.menuRecentCount: 100,
             K.onboardingDone: false,
         ])
         popupHotKey = Self.loadCombo(d, K.popupHotKey) ?? .defaultPopup

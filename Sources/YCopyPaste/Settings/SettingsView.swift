@@ -36,11 +36,17 @@ private struct GeneralSettings: View {
                 Picker("Окно истории", selection: $prefs.popupPosition) {
                     ForEach(PopupPosition.allCases) { Text($0.title).tag($0) }
                 }
-                Picker("Недавние в меню", selection: $prefs.menuRecentCount) {
-                    Text("Не показывать").tag(0)
-                    Text("5").tag(5)
-                    Text("10").tag(10)
-                    Text("20").tag(20)
+                LabeledContent {
+                    HStack(spacing: 6) {
+                        TextField("", value: $prefs.menuRecentCount, format: .number)
+                            .multilineTextAlignment(.trailing)
+                            .frame(width: 70)
+                        Stepper("", value: $prefs.menuRecentCount, in: 0...1000, step: 10)
+                            .labelsHidden()
+                    }
+                } label: {
+                    Text("Недавние в меню")
+                    Text("0 — не показывать. Длинный список в меню прокручивается.")
                 }
             }
             Section("Вставка") {
