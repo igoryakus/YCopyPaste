@@ -42,11 +42,11 @@ final class KeyablePanel: NSPanel {
                 setFrameOrigin(NSPoint(x: x, y: y))
                 return
             }
-            origin = NSPoint(x: visible.midX - size.width / 2, y: visible.midY - size.height / 2 + visible.height * 0.1)
+            origin = NSPoint(x: visible.midX - size.width / 2, y: visible.midY - size.height / 2)
         case .cursor:
             origin = NSPoint(x: mouse.x + 8, y: mouse.y - size.height - 8)
         case .center:
-            origin = NSPoint(x: visible.midX - size.width / 2, y: visible.midY - size.height / 2 + visible.height * 0.1)
+            origin = NSPoint(x: visible.midX - size.width / 2, y: visible.midY - size.height / 2)
         }
         origin.x = min(max(origin.x, visible.minX + 8), visible.maxX - size.width - 8)
         origin.y = min(max(origin.y, visible.minY + 8), visible.maxY - size.height - 8)
