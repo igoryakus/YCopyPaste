@@ -26,7 +26,10 @@ final class StatusBarController: NSObject, NSMenuDelegate {
         let image = NSImage(systemSymbolName: name, accessibilityDescription: "YCopyPaste")
         image?.isTemplate = true
         statusItem.button?.image = image
-        statusItem.button?.toolTip = paused ? "YCopyPaste — запись приостановлена" : "YCopyPaste"
+        // Без toolTip: у иконок в строке меню у фоновых приложений macOS
+        // иногда «забывает» подсказку на экране, и она висит поверх всех окон.
+        statusItem.button?.toolTip = nil
+        statusItem.button?.setAccessibilityLabel(paused ? "YCopyPaste — запись приостановлена" : "YCopyPaste")
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
